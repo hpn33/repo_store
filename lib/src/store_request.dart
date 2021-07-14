@@ -18,14 +18,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/**
- * data class to represent a single store request
- * @param key a unique identifier for your data
- * @param skippedCaches List of cache types that should be skipped when retuning the response see [CacheType]
- * @param refresh If set to true  [Store] will always get fresh value from fetcher while also
- *  starting the stream from the local [com.dropbox.android.external.store4.impl.SourceOfTruth] and memory cache
- *
- */
+// /**
+//  * data class to represent a single store request
+//  * @param key a unique identifier for your data
+//  * @param skippedCaches List of cache types that should be skipped when retuning the response see [CacheType]
+//  * @param refresh If set to true  [Store] will always get fresh value from fetcher while also
+//  *  starting the stream from the local [com.dropbox.android.external.store4.impl.SourceOfTruth] and memory cache
+//  *
+//  */
 class StoreRequest<Key> {
   final Key key;
   final int _skippedCaches;
@@ -37,9 +37,9 @@ class StoreRequest<Key> {
   @protected
   bool shouldSkipCache(CacheType type) => (type.flag & _skippedCaches) != 0;
 
-  /**
-     * Factories for common store requests
-     */
+  // /**
+  //    * Factories for common store requests
+  //    */
   // companion object {
   @protected
   static final allCaches = CacheType.values
@@ -49,17 +49,17 @@ class StoreRequest<Key> {
   //     prev.or(next.flag)
   // }
 
-  /**
-         * Create a Store Request which will skip all caches and hit your fetcher
-         * (filling your caches).
-         *
-         * Note: If the [Fetcher] does not return any data (i.e the returned
-         * [kotlinx.coroutines.Flow], when collected, is empty). Then store will fall back to local
-         * data **even** if you explicitly requested fresh data.
-         * See https://github.com/dropbox/Store/pull/194 for context.
-         */
+  // /**
+  //        * Create a Store Request which will skip all caches and hit your fetcher
+  //        * (filling your caches).
+  //        *
+  //        * Note: If the [Fetcher] does not return any data (i.e the returned
+  //        * [kotlinx.coroutines.Flow], when collected, is empty). Then store will fall back to local
+  //        * data **even** if you explicitly requested fresh data.
+  //        * See https://github.com/dropbox/Store/pull/194 for context.
+  //        */
 
-  StoreRequest fresh<Key>(Key key) =>
+  static StoreRequest<Key> fresh<Key>(Key key) =>
       StoreRequest(key, allCaches, refresh: true);
   // fun <Key> fresh(key: Key) = StoreRequest(
   //     key = key,
@@ -67,11 +67,11 @@ class StoreRequest<Key> {
   //     refresh = true
   // )
 
-  /**
-         * Create a Store Request which will return data from memory/disk caches
-         * @param refresh if true then return fetcher (new) data as well (updating your caches)
-         */
-  StoreRequest cached<Key>(Key key, bool refresh) =>
+  // /**
+  //        * Create a Store Request which will return data from memory/disk caches
+  //        * @param refresh if true then return fetcher (new) data as well (updating your caches)
+  //        */
+  static StoreRequest<Key> cached<Key>(Key key, bool refresh) =>
       StoreRequest(key, 0, refresh: refresh);
 
   //         fun <Key> cached(key: Key, refresh: Boolean) = StoreRequest(
@@ -80,11 +80,11 @@ class StoreRequest<Key> {
   //     refresh = refresh
   // )
 
-  /**
-         * Create a Store Request which will return data from disk cache
-         * @param refresh if true then return fetcher (new) data as well (updating your caches)
-         */
-  StoreRequest skipMemory<Key>(Key key, bool refresh) =>
+  // /**
+  //        * Create a Store Request which will return data from disk cache
+  //        * @param refresh if true then return fetcher (new) data as well (updating your caches)
+  //        */
+  static StoreRequest<Key> skipMemory<Key>(Key key, bool refresh) =>
       StoreRequest(key, CacheType.memory.flag, refresh: refresh);
   // fun <Key> skipMemory(key: Key, refresh: Boolean) = StoreRequest(
   //     key = key,

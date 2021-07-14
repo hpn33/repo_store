@@ -1,6 +1,4 @@
-import 'package:repostore/simp/fetcher.dart';
-import 'package:repostore/simp/source_of_truth.dart';
-import 'package:repostore/simp/store_builder.dart';
+import 'repo_store.dart';
 
 main(List<String> args) {
   // StoreBuilder.from(

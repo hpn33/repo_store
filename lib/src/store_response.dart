@@ -15,15 +15,13 @@
  */
 // package com.dropbox.android.external.store4
 
-import 'package:repostore/src/store.dart';
-
-/**
- * Holder for responses from Store.
- *
- * Instead of using regular error channels (a.k.a. throwing exceptions), Store uses this holder
- * class to represent each response. This allows the flow to keep running even if an error happens
- * so that if there is an observable single source of truth, application can keep observing it.
- */
+// /**
+//  * Holder for responses from Store.
+//  *
+//  * Instead of using regular error channels (a.k.a. throwing exceptions), Store uses this holder
+//  * class to represent each response. This allows the flow to keep running even if an error happens
+//  * so that if there is an observable single source of truth, application can keep observing it.
+//  */
 // sealed class StoreResponse<out T> {
 //     /**
 //      * Represents the source of the Response.
@@ -137,9 +135,9 @@ import 'package:repostore/src/store.dart';
 // }
 
 class StoreResponse<T> {
-  /**
-     * Represents the source of the Response.
-     */
+  // /**
+  //    * Represents the source of the Response.
+  //    */
   // abstract val origin: ResponseOrigin
   late final ResponseOrigin origin;
 
@@ -147,10 +145,12 @@ class StoreResponse<T> {
 
   factory StoreResponse.data(T value, ResponseOrigin origin) = Data;
   factory StoreResponse.error() = Error;
+  factory StoreResponse.noNewData(ResponseOrigin origin) = NoNewData;
+  factory StoreResponse.loading(ResponseOrigin origin) = Loading;
 
-  /**
-     * Returns the available data or throws [NullPointerException] if there is no data.
-     */
+  // /**
+  //    * Returns the available data or throws [NullPointerException] if there is no data.
+  //    */
   T requireData() {
     if (this is Data) {
       return (this as Data).value;
@@ -177,10 +177,10 @@ class StoreResponse<T> {
   //     }
   // }
 
-  /**
-     * If this [StoreResponse] is of type [StoreResponse.Error], throws the exception
-     * Otherwise, does nothing.
-     */
+  // /**
+  //    * If this [StoreResponse] is of type [StoreResponse.Error], throws the exception
+  //    * Otherwise, does nothing.
+  //    */
   void throwIfError() {
     if (this is Error) {
       (this as Error).doThrow();
@@ -193,10 +193,10 @@ class StoreResponse<T> {
   //     }
   // }
 
-  /**
-     * If this [StoreResponse] is of type [StoreResponse.Error], returns the available error
-     * from it. Otherwise, returns `null`.
-     */
+  // /**
+  //    * If this [StoreResponse] is of type [StoreResponse.Error], returns the available error
+  //    * from it. Otherwise, returns `null`.
+  //    */
   String? errorMessageOrNull() {
     if (this is Message) {
       return (this as Message).message;
@@ -221,9 +221,9 @@ class StoreResponse<T> {
   //     }
   // }
 
-  /**
-     * If there is data available, returns it; otherwise returns null.
-     */
+  // /**
+  //    * If there is data available, returns it; otherwise returns null.
+  //    */
   T? dataOrNull() {
     if (this is Data) {
       return (this as Data).value;
@@ -260,19 +260,19 @@ class StoreResponse<T> {
   }
 }
 
-/**
-     * Loading event dispatched by [Store] to signal the [Fetcher] is in progress.
-     */
-class Loading extends StoreResponse<Null> {
+// /**
+//      * Loading event dispatched by [Store] to signal the [Fetcher] is in progress.
+//      */
+class Loading<T> extends StoreResponse<T> {
   @override
   final ResponseOrigin origin;
 
   Loading(this.origin) : super._();
 }
 
-/**
-     * Data dispatched by [Store]
-     */
+// /**
+//      * Data dispatched by [Store]
+//      */
 // data class Data<T>(val value: T, override val origin: ResponseOrigin) : StoreResponse<T>()
 class Data<T> extends StoreResponse<T> {
   final T value;
@@ -281,20 +281,20 @@ class Data<T> extends StoreResponse<T> {
   Data(this.value, this.origin) : super._();
 }
 
-/**
-     * No new data event dispatched by Store to signal the [Fetcher] returned no data (i.e the
-     * returned [kotlinx.coroutines.Flow], when collected, was empty).
-     */
+// /**
+//      * No new data event dispatched by Store to signal the [Fetcher] returned no data (i.e the
+//      * returned [kotlinx.coroutines.Flow], when collected, was empty).
+//      */
 // data class NoNewData(override val origin: ResponseOrigin) : StoreResponse<Nothing>()
-class NoNewData extends StoreResponse<Null> {
+class NoNewData<T> extends StoreResponse<T> {
   final ResponseOrigin origin;
 
   NoNewData(this.origin) : super._();
 }
 
-/**
-     * Error dispatched by a pipeline
-     */
+// /**
+//      * Error dispatched by a pipeline
+//      */
 // sealed class Error : StoreResponse<Nothing>() {
 //     data class Exception(
 //         val error: Throwable,
@@ -330,23 +330,23 @@ class Message<T> extends Error<T> {
   Message(this.message, this.origin);
 }
 
-/**
- * Represents the origin for a [StoreResponse].
- */
+// /**
+//  * Represents the origin for a [StoreResponse].
+//  */
 enum ResponseOrigin {
-  /**
-     * [StoreResponse] is sent from the cache
-     */
+  // /**
+  //    * [StoreResponse] is sent from the cache
+  //    */
   cache,
 
-  /**
-     * [StoreResponse] is sent from the persister
-     */
+  // /**
+  //    * [StoreResponse] is sent from the persister
+  //    */
   sourceOfTruth,
 
-  /**
-     * [StoreResponse] is sent from a fetcher,
-     */
+  // /**
+  //    * [StoreResponse] is sent from a fetcher,
+  //    */
   fetcher
 }
 
