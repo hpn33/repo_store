@@ -13,20 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dropbox.android.external.store4.impl
+// package com.dropbox.android.external.store4.impl
 
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+// import kotlinx.coroutines.sync.Mutex
+// import kotlinx.coroutines.sync.withLock
 
-/**
- * Simple holder that can ref-count items by a given key.
- */
-internal class RefCountedResource<Key, T>(
-    private val create: suspend (Key) -> T,
-    private val onRelease: (suspend (Key, T) -> Unit)? = null
-) {
-    private val items = mutableMapOf<Key, Item>()
-    private val lock = Mutex()
+// /**
+//  * Simple holder that can ref-count items by a given key.
+//  */
+ class RefCountedResource<Key, T> {
+
+    final Future<T> Function(Key) _create;
+    final Future<void> Function(Key, T)? _onRelease;
+
+RefCountedResource   ({
+ required Future<T> Function(Key) create,
+    Future<void> Function(Key, T)? onRelease
+}
+): _create = create, _onRelease = onRelease;
+
+
+    final _items = Map<Key, Item>();
+    // final _items = mutableMapOf<Key, Item>();
+    final  _lock = Mutex();
+
 
     suspend fun acquire(key: Key): T = lock.withLock {
         items.getOrPut(key) {

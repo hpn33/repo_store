@@ -1,4 +1,5 @@
 import 'fetcher.dart';
+import 'impl/real_store.dart';
 import 'memory_policy.dart';
 import 'source_of_truth.dart';
 import 'store.dart';
@@ -203,14 +204,12 @@ class RealStoreBuilder<Key, Input, Output> extends StoreBuilder<Key, Output> {
 
   @override
   Store<Key, Output> build() {
-    // TODO: implement build
-    throw UnimplementedError();
-    // return RealStore(
-    //     // scope: scope ?? GlobalScope,
-    //     sourceOfTruth: _sourceOfTruth,
-    //     fetcher: _fetcher,
-    //     memoryPolicy: cachePolicyP,
-    // );
+    return RealStore(
+      // scope: scope ?? GlobalScope,
+      sourceOfTruth: _sourceOfTruth,
+      fetcher: _fetcher,
+      memoryPolicy: cachePolicyP,
+    );
   }
 }
 
