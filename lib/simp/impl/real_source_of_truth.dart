@@ -1,0 +1,106 @@
+/*
+ * Copyright 2019 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+// package com.dropbox.android.external.store4.impl
+
+// import com.dropbox.android.external.store4.SourceOfTruth
+// import kotlinx.coroutines.flow.Flow
+// import kotlinx.coroutines.flow.flow
+
+import '../source_of_truth.dart';
+
+class PersistentSourceOfTruth<Key, Input, Output>
+    extends SourceOfTruth<Key, Input, Output> {
+  final Stream<Output?> Function(Key) _realReader;
+  final Future<void> Function(Key, Input) _realWriter;
+  final Future<void> Function(Key)? _realDelete;
+  final Future<void> Function()? _realDeleteAll;
+
+  PersistentSourceOfTruth({
+    required Stream<Output?> Function(Key) realReader,
+    required Future<void> Function(Key, Input) realWriter,
+    Future<void> Function(Key)? realDelete,
+    Future<void> Function()? realDeleteAll,
+  })  : _realReader = realReader,
+        _realWriter = realWriter,
+        _realDelete = realDelete,
+        _realDeleteAll = realDeleteAll;
+
+  @override
+  Stream<Output?> reader(Key key) => _realReader(key);
+
+  @override
+  Future<void> write(Key key, Input value) => _realWriter(key, value);
+
+  @override
+  Future<void> delete(Key key) {
+    if (_realDelete == null) {
+      return (key) async {}(key);
+    }
+
+    return _realDelete!.call(key);
+  }
+
+  @override
+  Future<void> deleteAll() {
+    if (_realDeleteAll == null) {
+      return () async {}();
+    }
+
+    return _realDeleteAll!.call();
+  }
+}
+
+class PersistentNonFlowingSourceOfTruth<Key, Input, Output>
+    extends SourceOfTruth<Key, Input, Output> {
+  final Future<Output?> Function(Key) _realReader;
+  final Future<void> Function(Key, Input) _realWriter;
+  final Future<void> Function(Key)? _realDelete;
+  final Future<void> Function()? _realDeleteAll;
+
+  PersistentNonFlowingSourceOfTruth({
+    required Future<Output?> Function(Key) realReader,
+    required Future<void> Function(Key, Input) realWriter,
+    Future<void> Function(Key)? realDelete,
+    Future<void> Function()? realDeleteAll,
+  })  : _realReader = realReader,
+        _realWriter = realWriter,
+        _realDelete = realDelete,
+        _realDeleteAll = realDeleteAll;
+
+  @override
+  Stream<Output?> reader(Key key) => _realReader(key).asStream();
+
+  @override
+  Future<void> write(Key key, Input value) => _realWriter(key, value);
+
+  @override
+  Future<void> delete(Key key) {
+    if (_realDelete == null) {
+      return (key) async {}(key);
+    }
+
+    return _realDelete!.call(key);
+  }
+
+  @override
+  Future<void> deleteAll() {
+    if (_realDeleteAll == null) {
+      return () async {}();
+    }
+
+    return _realDeleteAll!.call();
+  }
+}
