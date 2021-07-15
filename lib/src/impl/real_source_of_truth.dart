@@ -45,22 +45,10 @@ class PersistentSourceOfTruth<Key, Input, Output>
   Future<void> write(Key key, Input value) => _realWriter(key, value);
 
   @override
-  Future<void> delete(Key key) {
-    if (_realDelete == null) {
-      return (key) async {}(key);
-    }
-
-    return _realDelete!.call(key);
-  }
+  Future<void> delete(Key key) async => _realDelete?.call(key);
 
   @override
-  Future<void> deleteAll() {
-    if (_realDeleteAll == null) {
-      return () async {}();
-    }
-
-    return _realDeleteAll!.call();
-  }
+  Future<void> deleteAll() async => _realDeleteAll!.call();
 }
 
 class PersistentNonFlowingSourceOfTruth<Key, Input, Output>
@@ -87,20 +75,8 @@ class PersistentNonFlowingSourceOfTruth<Key, Input, Output>
   Future<void> write(Key key, Input value) => _realWriter(key, value);
 
   @override
-  Future<void> delete(Key key) {
-    if (_realDelete == null) {
-      return (key) async {}(key);
-    }
-
-    return _realDelete!.call(key);
-  }
+  Future<void> delete(Key key) async => _realDelete?.call(key);
 
   @override
-  Future<void> deleteAll() {
-    if (_realDeleteAll == null) {
-      return () async {}();
-    }
-
-    return _realDeleteAll!.call();
-  }
+  Future<void> deleteAll() async => _realDeleteAll?.call();
 }

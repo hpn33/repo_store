@@ -38,7 +38,7 @@ RefCountedResource   ({
     final  _lock = Mutex();
 
 
-    suspend fun acquire(key: Key): T = lock.withLock {
+    Future<T> acquire(Key key) => lock.withLock {
         items.getOrPut(key) {
             Item(create(key))
         }.also {
@@ -46,7 +46,7 @@ RefCountedResource   ({
         }.value
     }
 
-    suspend fun release(key: Key, value: T) = lock.withLock {
+    Future release(Key key, T value) => lock.withLock {
         val existing = items[key]
         check(existing != null && existing.value === value) {
             "inconsistent release, seems like $value was leaked or never acquired"
@@ -59,12 +59,21 @@ RefCountedResource   ({
     }
 
     // used in tests
-    suspend fun size() = lock.withLock {
+    Future size() => lock.withLock {
         items.size
     }
 
-    private inner class Item(
-        val value: T,
-        var refCount: Int = 0
-    )
+    // private inner class Item(
+    //     val value: T,
+    //     var refCount: Int = 0
+    // )
+}
+
+class Item<T> {
+final T value;
+int refCount= 0;
+
+  Item(this.value, this.refCount);
+
+
 }
